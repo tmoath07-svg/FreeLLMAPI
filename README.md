@@ -68,7 +68,7 @@ And the free-tier landscape shifts weekly: providers launch models, retire them,
 ![The free tier, stacked — ~7.4B tokens of free inference per month across 34 providers](repo-assets/free-tier.png)
 
 ## Supported providers
-
+\n> **Retired provider:** GitHub Models was shut down on July 30, 2026, including its inference API. It is not available for new or existing requests. [Official notice](https://github.blog/changelog/2026-07-30-github-models-is-now-retired/).\n
 <div align="center">
 <table>
 <tr>
