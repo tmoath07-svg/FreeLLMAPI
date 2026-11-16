@@ -1,0 +1,33 @@
+# Render Blueprint for a free, sleep-on-idle test deployment.
+# Persistent state is protected by FreeLLMAPI's encrypted Hugging Face backup.
+services:
+  - type: web
+    name: freellmapi
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/ping
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      # Render supplies PORT for the web service; the app reads it at startup.
+      - key: ENCRYPTION_KEY
+        generateValue: true
+      - key: FREEAPI_DB_BACKUP_KEY
+        generateValue: true
+      # Set these to a private Hugging Face dataset's resolve URL and a
+      # write-enabled token. See docs/en/deployment/03-render-free.md.
+      - key: FREEAPI_DB_BACKUP_URL
+        sync: false
+      - key: FREEAPI_DB_BACKUP_TOKEN
+        sync: false
+      - key: FREEAPI_DB_BACKUP_INTERVAL_MS
+        value: "900000"
+      # The service is public; block custom provider URLs targeting private
+      # networks to reduce SSRF exposure.
+      - key: FREEAPI_BLOCK_PRIVATE_PROVIDER_URLS
+        value: "true"
