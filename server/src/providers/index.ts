@@ -112,6 +112,17 @@ register(new OpenAICompatProvider({
   baseUrl: 'https://api.b.ai/v1',
 }));
 
+// FreeModel — OpenAI-compatible multi-model gateway. Its free plan includes
+// a monthly token allowance, but model calls are not universally zero-priced:
+// the gateway publishes per-model input/output rates and returns 402 when both
+// the allowance and wallet balance are exhausted. Keep model selection explicit
+// and use /models discovery so the dashboard can show the live roster.
+register(new OpenAICompatProvider({
+  platform: 'freemodel',
+  name: 'FreeModel',
+  baseUrl: 'https://freemodel.in/v1',
+}));
+
 // AnyAPI - OpenAI-compatible gateway (anyapi.ai). Free tier (checked against
 // anyapi.ai/pricing 2026-08-10): $0, no card, recurring — but the binding limit
 // is 100K TOKENS PER DAY, and only "free and basic" models are in scope. AnyAPI

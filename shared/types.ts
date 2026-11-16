@@ -210,6 +210,10 @@ export type Platform =
   // /v1/usage, which 401s on a missing/invalid ClientApiKey. Catalog rows live
   // in the hosted catalog (premium now, free after the 30-day model-age gate).
   | 'xkiro'
+  // FreeModel — OpenAI-compatible multi-model gateway. Free plan includes
+  // a monthly token allowance; individual models have published per-token
+  // prices and usage beyond the allowance can consume wallet balance.
+  | 'freemodel'
   // ModelScope (魔搭社区, Alibaba) — OpenAI-compatible inference API
   // (api-inference.modelscope.cn/v1). Free tier is 2000 requests/day
   // account-wide, but calls only work after the ModelScope account is bound to
