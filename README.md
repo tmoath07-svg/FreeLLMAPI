@@ -55,7 +55,7 @@ Your router updates its own model catalog from a signed feed: new free models, q
 - [Contributing](#contributing)
 - [Disclaimer](#disclaimer)
 
-**Guides:** [Install & deploy](docs/en/install/01-install.md) · [API reference](docs/en/api/01-rest-api.md) · [Clients & coding agents](docs/en/clients/01-agent-clients.md) · [Prompt compression](docs/en/compression/01-compression-pipeline.md) · [Architecture & internals](docs/en/architecture/00-high-level-index.md) · [Documentation index](docs/en/README.md) · [Contributor guide](CONTRIBUTING.md)
+**Guides:** [Install & deploy](docs/en/install/01-install.md) · [Free Render test deployment](docs/en/deployment/03-render-free.md) · [API reference](docs/en/api/01-rest-api.md) · [Clients & coding agents](docs/en/clients/01-agent-clients.md) · [Prompt compression](docs/en/compression/01-compression-pipeline.md) · [Architecture & internals](docs/en/architecture/00-high-level-index.md) · [Documentation index](docs/en/README.md) · [Contributor guide](CONTRIBUTING.md)
 
 ## Why this exists
 
