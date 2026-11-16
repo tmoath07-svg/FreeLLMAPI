@@ -7,6 +7,7 @@ services:
     plan: free
     dockerfilePath: ./Dockerfile
     dockerContext: .
+    dockerCommand: /usr/local/bin/render-start.sh
     healthCheckPath: /api/ping
     autoDeploy: true
     envVars:
@@ -14,10 +15,9 @@ services:
         value: production
       - key: HOST
         value: 0.0.0.0
-      # Render supplies PORT for the web service; the app reads it at startup.
-      - key: ENCRYPTION_KEY
-        generateValue: true
-      - key: FREEAPI_DB_BACKUP_KEY
+      # Render generates a stable base64 secret; render-start.sh derives the
+      # 64-character hex keys FreeLLMAPI requires from this value.
+      - key: FREEAPI_RENDER_MASTER_SECRET
         generateValue: true
       # Set these to a private Hugging Face dataset's resolve URL and a
       # write-enabled token. See docs/en/deployment/03-render-free.md.
