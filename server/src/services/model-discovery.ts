@@ -148,6 +148,16 @@ function perMillionTokens(raw: unknown): number | null {
   return value > 0 && value < PER_TOKEN_CEILING ? value * 1_000_000 : value;
 }
 
+/** FreeModel reports USD per 1,000 tokens, unlike OpenRouter's per-token
+ *  values and the per-million values used by some other gateways. */
+function perThousandTokens(raw: unknown): number | null {
+  if (typeof raw !== 'number' && typeof raw !== 'string') return null;
+  if (typeof raw === 'string' && raw.trim().length === 0) return null;
+  const value = Number(raw);
+  if (!Number.isFinite(value) || value < 0) return null;
+  return value * 1_000;
+}
+
 /** A tidy USD figure: at most four decimals, and no `1.2500000000000002`
  *  float noise from the per-token scaling. */
 function formatUsd(value: number): string {
@@ -176,6 +186,19 @@ function priceHintOf(record: Record<string, unknown>): { note: string; isFree: b
     }
     const pricing = asRecord(value);
     if (!pricing) continue;
+    // FreeModel's documented shape is { input_per_1k, output_per_1k }.
+    // Convert those values from USD/1K tokens to the common USD/1M display
+    // unit before considering the older OpenRouter-compatible field names.
+    const inputPer1k = perThousandTokens(pricing.input_per_1k);
+    const outputPer1k = perThousandTokens(pricing.output_per_1k);
+    if (inputPer1k !== null || outputPer1k !== null) {
+      if (inputPer1k === 0 && outputPer1k === 0) return { note: 'free', isFree: true };
+      const parts: string[] = [];
+      if (inputPer1k !== null) parts.push(`${formatUsd(inputPer1k)}/M in`);
+      if (outputPer1k !== null) parts.push(`${formatUsd(outputPer1k)}/M out`);
+      return { note: capNote(parts.join(' ')), isFree: false };
+    }
+
     const prompt = perMillionTokens(pricing.prompt);
     const completion = perMillionTokens(pricing.completion);
     if (prompt === null && completion === null) continue;

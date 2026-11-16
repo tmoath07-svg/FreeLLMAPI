@@ -42,10 +42,11 @@ import { customModelSyncFreePatterns, customModelSyncIntervalMs } from './custom
 //    catalog-managed, see isCatalogManagedModel), and every automatic pass
 //    honors it. Only an explicit pick in the dashboard lifts it.
 
-/** Built-in platforms eligible for discovery. Each is OpenAI-compatible and has
- *  zero rows, enabled or disabled, in the signed live catalog (checked against
- *  2026.09.27). Remove a platform here in the same change that adds it to the
- *  catalog; managedPlatforms in the catalog covers binaries already shipped. */
+/** Built-in platforms eligible for discovery. Each is OpenAI-compatible and
+ *  has no signed-catalog model rows. FreeModel is a local integration added
+ *  outside the upstream catalog; the runtime catalog-managed guard still wins
+ *  if a future signed catalog begins managing it. Remove a platform here in the
+ *  same change that adds it to the catalog. */
 export const BUILTIN_DISCOVERY_PLATFORMS: readonly Platform[] = ['github', 'longcat', 'siliconflow', 'freemodel'];
 
 /** `BUILTIN_MODEL_DISCOVERY`: 'manual' (default) keeps only the dashboard's

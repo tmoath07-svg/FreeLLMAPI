@@ -92,6 +92,31 @@ describe('parseModelCatalog tolerance (#488)', () => {
     });
   });
 
+  it('converts FreeModel per-1K prices to the common per-million display and marks them paid', () => {
+    const [m] = parseModelCatalog({
+      data: [{
+        id: 'gpt-6-luna',
+        context_window: 1_000_000,
+        pricing: { input_per_1k: 0.000115, output_per_1k: 0.00023 },
+      }],
+    });
+    expect(m).toEqual({
+      id: 'gpt-6-luna',
+      ownedBy: null,
+      contextWindow: 1_000_000,
+      priceNote: '$0.115/M in $0.23/M out',
+      isFree: false,
+    });
+  });
+
+  it('recognizes a genuinely zero-priced FreeModel entry as free', () => {
+    const [m] = parseModelCatalog({
+      data: [{ id: 'free-model', pricing: { input_per_1k: 0, output_per_1k: 0 } }],
+    });
+    expect(m.priceNote).toBe('free');
+    expect(m.isFree).toBe(true);
+  });
+
   it('calls an OpenRouter zero-priced model free rather than "$0" (#685)', () => {
     const [m] = parseModelCatalog({
       data: [
