@@ -4,7 +4,9 @@ This Blueprint deploys the Docker image as a **free Render web service**. It is 
 
 ## Why the backup settings are required
 
-Free Render services cannot attach persistent disks. FreeLLMAPI stores provider credentials and settings in SQLite, so this guide uses the application's built-in **encrypted database backup** to a private Hugging Face dataset repository. The database backup is encrypted before upload; keep the Render environment variables `ENCRYPTION_KEY` and `FREEAPI_DB_BACKUP_KEY` unchanged. If either is lost or regenerated, stored provider credentials or the backup cannot be decrypted.
+Free Render services cannot attach persistent disks. FreeLLMAPI stores provider credentials and settings in SQLite, so this guide uses the application's built-in **encrypted database backup** to a private Hugging Face dataset repository. The database backup is encrypted before upload.
+
+The Blueprint generates one persistent Render secret, `FREEAPI_RENDER_MASTER_SECRET`. The container's Render startup wrapper derives two independent 64-character hexadecimal keys from it: `ENCRYPTION_KEY` for encrypted provider credentials and `FREEAPI_DB_BACKUP_KEY` for database backups. **Do not delete or regenerate this Render secret**: doing so makes existing provider keys and backups unreadable.
 
 ## One-time setup
 
@@ -23,14 +25,14 @@ Replace `USERNAME` with the Hugging Face account or organization that owns the p
 
 1. Open the dashboard and finish initial setup.
 2. Check Render logs for a `[db-backup] uploaded ...` message. The first backup is attempted as soon as the server starts its backup pump; later backups run every 15 minutes.
-3. Restart or redeploy the service once, then check the logs for `[db-backup] restored ...` if the local database was absent.
+3. Restart or redeploy the service once, then check the logs for a `[db-backup] restored ...` message if the local database was absent.
 4. Only after the backup succeeds, add provider keys and configure model routing.
 
 ## Important limits
 
 - The free service sleeps after 15 minutes of inactivity. The first request after sleep incurs a cold start.
 - Render may restart a free instance at any time. The encrypted backup reduces data-loss risk but is not a transactional, zero-loss guarantee; changes made since the last successful 15-minute backup can be lost.
-- Keep the Render-generated `ENCRYPTION_KEY` and `FREEAPI_DB_BACKUP_KEY` stable. Save them securely in Render; never commit them to the repository.
+- Keep `FREEAPI_RENDER_MASTER_SECRET` unchanged. Save it securely in Render; never commit it to the repository.
 - Keep the Hugging Face dataset private. The backup contains encrypted application data, but it should not be published.
 - Free provider quotas, availability, context windows, and terms are controlled by each provider. The router cannot make them unlimited.
 - This setup is for testing. Do not expose the unified API key publicly or share the service URL with people you do not trust.
